@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,57 +6,118 @@ using UnityEngine;
 public class Snake_Head : Body_Part
 {
     Vector2 _movement;
+    private Body_Part tail = null;
+    const float timeToAdBodyPart = 0.01f;
+    float addTimer = timeToAdBodyPart;
+    float _snakeSpeed=0f; 
+   
+    private int partToAdd = 0;
     // Start is called before the first frame update
     void Start()
     {
         Swipe_Controller.OnSwipe += SwipeDetection;
+        _snakeSpeed = Game_Controller.instance._snakeSpeed;
     }
 
     // Update is called once per frame
-    void Update()
+    public override void Update()
     {
+        if (!Game_Controller.instance.alive) { return; }
+
+        base.Update();
+
         SetMovement( _movement );
         UpdateDirection();
         UpdatePosition();
 
+        if (partToAdd > 0)
+        {
+            addTimer -= Time.deltaTime;
+            if(addTimer <=0)
+            {
+                addTimer = timeToAdBodyPart;
+                AddboddyPart();
+                partToAdd--;
+            }
+        }
+
+    }
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        Egg_Mine egg=collision.GetComponent<Egg_Mine>();
+        if(egg != null) { EatEgg(egg); }
+        else { Debug.Log("Hit obstacle");
+            Game_Controller.instance.GameOver();
+        }
     }
     void SwipeDetection(Swipe_Controller.SwipeDirection direction)
     {
         switch (direction)
         {
             case Swipe_Controller.SwipeDirection.up:
-                MoveUp();
+                Move(Vector2.up);
                 break;
             case Swipe_Controller.SwipeDirection.down:
-                MoveDown();
+                Move(Vector2.down);
                 break;
             case Swipe_Controller.SwipeDirection.left:
-                MoveLeft();
+                Move(Vector2.left);
                 break;
             case Swipe_Controller.SwipeDirection.right:
-                MoveRight();
+                Move(Vector2.right);
                 break;
         }
     }
 
-    void MoveUp()
+    private void Move(Vector2 dir)
     {
-        _movement = Vector2.up * Game_Controller.instance._snakeSpeed*Time.deltaTime;
+        _movement = _snakeSpeed * Time.deltaTime * dir;
+    }
+   
+    void AddboddyPart()
+    {
+        if (tail == null)
+        {
+            Vector3 newPosition = transform.position;
+            newPosition.z += 0.01f;
+
+            Body_Part newPart=Instantiate(Game_Controller.instance.bodyPrefab,newPosition,Quaternion.identity);
+            newPart.following = this;
+            tail = newPart;
+            newPart.TurnInToTail();
+        }
+        else
+        {
+            Vector3 newPosition=tail.transform.position;
+            newPosition.z +=0.01f;
+
+            Body_Part newPart = Instantiate(Game_Controller.instance.bodyPrefab, newPosition, Quaternion.identity);
+            newPart.following = tail;
+            newPart.TurnInToTail();
+            tail.TurnInToBodyPart();
+            tail = newPart;
+
+
+        }
     }
 
-    void MoveDown()
+     public void ResetSnake()
     {
-        _movement = Vector2.down * Game_Controller.instance._snakeSpeed * Time.deltaTime;
-
+        StartCoroutine(ResetAction()
+        );
     }
-    void MoveLeft()
+    IEnumerator ResetAction()
     {
-        _movement = Vector2.left * Game_Controller.instance._snakeSpeed * Time.deltaTime;
-
+        yield return new WaitForSeconds(2);
+        tail = null;
+        Move(Vector2.up);
+        partToAdd = 5;
+        addTimer = timeToAdBodyPart;
     }
-    void MoveRight()
+    private void EatEgg(Egg_Mine egg)
     {
-        _movement = Vector2.right * Game_Controller.instance._snakeSpeed * Time.deltaTime;
-
+        partToAdd = 5;
+        addTimer = 0;
+        Game_Controller.instance.EggEaten(egg);
     }
 }
