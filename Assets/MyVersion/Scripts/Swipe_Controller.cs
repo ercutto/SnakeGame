@@ -22,10 +22,35 @@ public class Swipe_Controller : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        SwipeMove();
-        MouseMove();
+        //SwipeMove();
+        //MouseMove();
+        foreach (Touch touch in Input.touches)
+        {
+            if (touch.phase == TouchPhase.Began)
+            {
+                swipeStart = touch.position;
+            }
+            else if (touch.phase == TouchPhase.Ended)
+            {
+                swipeEnd = touch.position;
+                //baslangic yapilmis ve bitmis demektir ozaman dokunusun yonunu tespit edebilriiz
+                ProcessSwipe();
+            }
+        }
+
+        if (Input.GetMouseButtonDown(0))
+        {
+            swipeStart = Input.mousePosition;
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            swipeEnd = Input.mousePosition;
+            ProcessSwipe();
+        }
     }
-    void SwipeMove()
+
+    //burayi gecici yaptim
+   /* void SwipeMove()
     {
         foreach (Touch touch in Input.touches)
         {
@@ -53,6 +78,7 @@ public class Swipe_Controller : MonoBehaviour
         }
 
     }
+   */
     void ProcessSwipe()
     {
         float _distance=Vector2.Distance(swipeStart, swipeEnd);

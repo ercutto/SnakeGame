@@ -7,7 +7,7 @@ public class Body_Part : MonoBehaviour
 {
     Vector2 _dPosition;
     public Body_Part following = null;
-    bool isTail=false;
+ 
 
     private SpriteRenderer spriteRenderer=null;
     const int PARTSREMEMBERED=10;
@@ -24,6 +24,11 @@ public class Body_Part : MonoBehaviour
     {
         
     }
+    public void ResetMemory()
+    {
+        setIndex = 0;
+        getIndex = -(PARTSREMEMBERED - 1);
+    }
 
     // Update is called once per frame
     public virtual void Update()
@@ -39,16 +44,17 @@ public class Body_Part : MonoBehaviour
         }
         else { followPosition = gameObject.transform.position; }
 
+       
         previousPositions[setIndex].x = gameObject.transform.position.x;
         previousPositions[setIndex].y = gameObject.transform.position.y;
         previousPositions[setIndex].z = gameObject.transform.position.z;
 
         setIndex++;
-        if(setIndex >= PARTSREMEMBERED) setIndex = 0;
+        if (setIndex >= PARTSREMEMBERED) setIndex = 0;
         getIndex++;
-        if(getIndex >= PARTSREMEMBERED)getIndex = 0;
+        if (getIndex >= PARTSREMEMBERED) getIndex = 0;
 
-        if(following != null)
+        if (following != null)
         {
             Vector3 newPosition;
             if (following.getIndex > -1)
@@ -60,7 +66,8 @@ public class Body_Part : MonoBehaviour
                 newPosition = following.transform.position;
             }
 
-            newPosition.z += 0.01f;
+            newPosition.z=newPosition.z + 0.01f;
+            
 
             SetMovement(newPosition - gameObject.transform.position);
             UpdateDirection();
@@ -72,13 +79,16 @@ public class Body_Part : MonoBehaviour
 
 
     }
+ 
     public void SetMovement(Vector2 movement)
     {
         _dPosition = movement;
     }
     public void UpdatePosition()
     {
+       
         gameObject.transform.position += (Vector3)_dPosition;
+
     }
     public void UpdateDirection()
     {
@@ -108,20 +118,18 @@ public class Body_Part : MonoBehaviour
     }
 
     public void TurnInToTail()
-    {
-        isTail = true;
-        if (spriteRenderer != null)
+    { if (spriteRenderer != null)
         {
             spriteRenderer.sprite = Game_Controller.instance.tailSprite;
         }
         else
         {
-            Debug.LogError("spriteRenderer yok");
+           // Debug.LogError("spriteRenderer yok");
         }
     }
     public void TurnInToBodyPart()
     {
-        isTail = false;
+   
         spriteRenderer.sprite = Game_Controller.instance.bodySprite;
     }
 

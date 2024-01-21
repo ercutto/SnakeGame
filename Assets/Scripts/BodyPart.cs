@@ -26,7 +26,7 @@ public class BodyPart : MonoBehaviour
     void Start()
     {
     }
-
+   
     public void ResetMemory()
     {
         setIndex = 0;
@@ -85,7 +85,8 @@ public class BodyPart : MonoBehaviour
     }
 
     public void UpdatePosition()
-    {
+    { 
+       
         gameObject.transform.position += (Vector3)dPosition;
     }
 
