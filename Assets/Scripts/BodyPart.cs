@@ -12,14 +12,15 @@ public class BodyPart : MonoBehaviour
 
     const int PARTSREMEMBERED = 10;
     public Vector3[] previousPositions = new Vector3[PARTSREMEMBERED];
-
+    
     public int setIndex = 0;
     public int getIndex = -(PARTSREMEMBERED-1);
 
-
+    
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
+       
     }
 
     // Start is called before the first frame update
@@ -111,4 +112,5 @@ public class BodyPart : MonoBehaviour
     {
         spriteRenderer.sprite = GameController.instance.bodySprite;
     }
+    
 }

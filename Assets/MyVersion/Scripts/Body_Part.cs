@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements.Experimental;
 
 public class Body_Part : MonoBehaviour
 {
@@ -14,11 +15,14 @@ public class Body_Part : MonoBehaviour
     public Vector3[] previousPositions = new Vector3[PARTSREMEMBERED];
     public int setIndex = 0;
     public int getIndex = -(PARTSREMEMBERED - 1);
+    public int eating = Animator.StringToHash("eating");
+    Animator animator;
     // Start is called before the first frame update
     private void Awake()
     {
         spriteRenderer = GetComponent<SpriteRenderer>();
-        
+        animator = GetComponent<Animator>();
+
     }
     void Start()
     {
@@ -133,5 +137,8 @@ public class Body_Part : MonoBehaviour
         spriteRenderer.sprite = Game_Controller.instance.bodySprite;
     }
 
-  
+    public void PlayAnim()
+    {
+        animator.Play(eating);
+    }
 }

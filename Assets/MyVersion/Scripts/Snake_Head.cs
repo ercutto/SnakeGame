@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -136,6 +137,20 @@ public class Snake_Head : Body_Part
     {
         partToAdd = 5;
         addTimer = 0;
+        StartCoroutine(PlayAnimForAll());
         Game_Controller.instance.EggEaten(egg);
     }
+    IEnumerator PlayAnimForAll()
+    { 
+            for (int i = 0; i < parts.Count; i++)
+            {
+               parts[i].PlayAnim();
+                yield return new WaitForSeconds(0.1f);
+            }
+            
+            
+        
+        
+    }
+
 }

@@ -157,7 +157,7 @@ public class SnakeHead : BodyPart
     {
         partsToAdd = 5;
         addTimer   = 0;
-
+        
         GameController.instance.EggEaten(egg);
     }
 }

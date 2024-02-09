@@ -194,6 +194,8 @@ public class Game_Controller : MonoBehaviour
 
         snake_Head.ResetSnake();
         CreateEgg();
+
+        
         AddSpike();
     }
     void AddSpike()
